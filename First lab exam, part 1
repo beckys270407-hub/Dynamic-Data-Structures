@@ -1,1 +1,69 @@
 //Realizar un programa que por medio de una lista calcule el promedio de valores para los nodos y elimine los dos nodos mas cercanos al promedio (imprimir en pantalla el promedio y los nodos borrados)
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    float data;
+    Node* next;
+    Node(float value) : data(value), next(nullptr) {}
+};
+
+int main() {
+    Node* dummy = new Node(0);
+    Node* tail = dummy;
+    int total;
+    float sum = 0;
+
+    cout << "How many nodes do you want to add? ";
+    cin >> total;
+
+     cout << "\n";
+
+    for (int i = 0; i < total; i++) {
+        float val;
+        cout << "Enter value for node: ";
+        cin >> val;
+        tail->next = new Node(val);
+        tail = tail->next;
+        sum += val;     
+    }
+
+    float average = sum / total;
+    cout << "\nAverage: " << average << endl;
+    cout << "\n";
+    
+    for (int k = 0; k < 2; k++) {
+        Node *prev = dummy, *curr = dummy->next;
+        Node *targetPrev = nullptr;
+        float minDiff = -1;
+
+        while (curr != nullptr) {
+            float diff = curr->data - average;
+            if (diff < 0) diff = -diff;
+
+            if (minDiff == -1 || diff < minDiff) {
+                minDiff = diff;
+                targetPrev = prev;
+            }
+            prev = curr;
+            curr = curr->next;
+        }
+        if (targetPrev && targetPrev->next) {
+            Node* temp = targetPrev->next;
+            cout << "Removing node with value: " << temp->data << endl;
+            targetPrev->next = temp->next;
+            delete temp;
+        }
+    }
+
+    cout << "\nRemaining nodes in the list: ";
+    Node* temp = dummy->next;
+    while (temp) {
+        cout << "[" << temp->data << "] -> ";
+        temp = temp->next;
+    }
+    cout << "nullptr" << endl;
+
+    return 0;
+}
