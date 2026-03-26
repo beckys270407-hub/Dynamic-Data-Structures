@@ -1,0 +1,117 @@
+//dada una cola de n numeros, pedir al usuario que ingrese una secuencia de simbolos, y aplicar las operaciones de cada secuencia de cada simbolo siguiendo LIFO. 
+// -: eliminar N numeros 
+// + sumar los siguientes numeros, eliminarlos y guardar la suma
+// %: dividir todos los numeros por el tamagno de la cola
+// /: dividir la cola en N porciones y quedarse solo con la ultima porcion
+
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <vector>
+
+using namespace std;
+
+void printQueue(queue<int> q) {
+    while (!q.empty()) {
+        cout << q.front() << " ";
+        q.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    queue<int> q;
+    stack<pair<char, int>> ops;
+    vector<int> numbers;
+
+    int n;
+    cout << "Enter number of elements: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        int num;
+        cout << "Enter number: ";
+        cin >> num;
+
+        q.push(num);
+        numbers.push_back(num);
+    }
+
+    cout << "\nInitial queue:\n";
+    printQueue(q);
+
+    string sequence;
+    cout << "\nEnter sequence of symbols: ";
+    cin >> sequence;
+
+    int limit = min((int)sequence.size(), n);
+
+    for (int i = 0; i < limit; i++) {
+        ops.push({sequence[i], numbers[i]});
+    }
+
+    while (!ops.empty()) {
+        char op = ops.top().first;
+        int rawN = ops.top().second;
+        ops.pop();
+
+        if (q.empty()) break;
+
+        int size = q.size();
+        int N = (rawN % size) + 1; 
+
+        if (op == '-') {
+            int removeN = min(N, size - 1);
+
+            for (int i = 0; i < removeN; i++) {
+                q.pop();
+            }
+        }
+
+        else if (op == '+') {
+            int sum = 0;
+            int count = min(N, (int)q.size());
+
+            for (int i = 0; i < count; i++) {
+                sum += q.front();
+                q.pop();
+            }
+
+            q.push(sum);
+        }
+
+        else if (op == '%') {
+            queue<int> temp;
+
+            while (!q.empty()) {
+                temp.push(q.front() / size);
+                q.pop();
+            }
+
+            q = temp;
+        }
+
+        else if (op == '/') {
+            int partSize = size / N;
+            if (partSize == 0) partSize = 1;
+
+            int skip = size - partSize;
+
+            if (skip >= size) skip = size - 1;
+
+            for (int i = 0; i < skip; i++) {
+                q.pop();
+            }
+        }
+    }
+
+    cout << "\nFinal queue:\n";
+
+    if (q.empty()) {
+        cout << "Queue is empty\n";
+    } else {
+        printQueue(q);
+    }
+
+    return 0;
+}
