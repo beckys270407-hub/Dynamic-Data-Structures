@@ -1,0 +1,92 @@
+//construir una cola de prioridad que procese a las personas segun su rol. Roles: directores->administracion->profesores->estudiantes->personal de mantenimiento 
+
+#include <iostream>
+#include <queue>
+#include <string>
+
+using namespace std;
+
+struct Person {
+    string name;
+    string lastName;
+    string ci;
+    string role;
+};
+
+void processQueue(queue<Person>& directors,
+                  queue<Person>& admin,
+                  queue<Person>& professors,
+                  queue<Person>& students,
+                  queue<Person>& maintenance) {
+
+    Person p;
+
+    if (!directors.empty()) {
+        p = directors.front(); directors.pop();
+    }
+    else if (!admin.empty()) {
+        p = admin.front(); admin.pop();
+    }
+    else if (!professors.empty()) {
+        p = professors.front(); professors.pop();
+    }
+    else if (!students.empty()) {
+        p = students.front(); students.pop();
+    }
+    else if (!maintenance.empty()) {
+        p = maintenance.front(); maintenance.pop();
+    }
+    else {
+        cout << "No more people.\n";
+        return;
+    }
+
+    cout << "Processing: "
+         << p.name << " " << p.lastName
+         << " | CI: " << p.ci
+         << " | Role: " << p.role << endl;
+}
+
+int main() {
+    queue<Person> directors, admin, professors, students, maintenance;
+
+    int n;
+    cout << "Enter number of people: ";
+    cin >> n;
+
+    for (int i = 0; i < n; i++) {
+        Person p;
+
+        cout << "\nEnter name: ";
+        cin >> p.name;
+
+        cout << "Enter last name: ";
+        cin >> p.lastName;
+
+        cout << "Enter CI: ";
+        cin >> p.ci;
+
+        cout << "Enter role (director/admin/professor/student/maintenance): ";
+        cin >> p.role;
+
+        if (p.role == "director")
+            directors.push(p);
+        else if (p.role == "admin")
+            admin.push(p);
+        else if (p.role == "professor")
+            professors.push(p);
+        else if (p.role == "student")
+            students.push(p);
+        else
+            maintenance.push(p);
+    }
+
+    cout << "\nProcessing queue by priority:\n";
+
+    while (!directors.empty() || !admin.empty() || !professors.empty()
+        || !students.empty() || !maintenance.empty()) {
+        processQueue(directors, admin, professors, students, maintenance);
+    }
+
+    return 0;
+}
